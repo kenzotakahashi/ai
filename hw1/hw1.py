@@ -1,27 +1,22 @@
 #!/usr/bin/python3
 
 def bfs(state, func, params):
-	if isGoal(state): return True
+	if isGoal(state): return ([],0,0)
 	fringe = [state]
-	explored = []
+	explored = 0
 	moves = []
 	while True:
-		s = fringe.pop(0)
+		node = fringe.pop(0)
+		if isGoal(node):
+			return node['move'], explored, len(fringe)
 		for param in params:
-			if s['move'].count(param) < 2:
-				moveStr = ''.join([str(x) for x in sorted(s['move'] + [param])])
+			if node['move'].count(param) < 2:
+				moveStr = ''.join([str(x) for x in sorted(node['move'] + [param])])
 				if not moveStr in moves:
+					state = func(node, param)
 					moves.append(moveStr)
-					state = func(s, param)
-					explored.append(state['state'])
-					if isGoal(state):
-						print (state)
-						print ('The number of nodes expanded: ', len(explored))
-						print ('The number of nodes in fringe: ', len(fringe))
-						return
 					fringe.append(state)
-	return
-
+					explored += 1
 
 def isGoal(state):
 	return len(set(state['state'])) == 1
@@ -29,9 +24,8 @@ def isGoal(state):
 def castSpell(state, num):
 	newState = state['state'][:]
 	for i in createIndex(num):
-		newState[i] = changeJewel(newState[i])
+		newState[i] = 'ERD'['ERD'.index(newState[i]) - 1]
 	return {'state': newState, 'move': state['move'] + [num]}
-
 
 def createIndex(num):
 	index = [num]
@@ -41,13 +35,6 @@ def createIndex(num):
 	if not num in [6,7,8]: index.append(num + 3)
 	return index
 
-def changeJewel(jewel):
-	return 'ERD'['ERD'.index(jewel) - 1]
-
-def printState(state):
-	string = ''.join(state['state'])
-	return string[0:3] + '\n' + string[3:6] + '\n' + string[6:9]
-
 def main():
 	while True:
 		state = input('Enter an initial state: ')
@@ -56,22 +43,13 @@ def main():
 		print ('Invalid input.')
 
 	state = {'state': list(state.upper()), 'move': []}
-
-
 	params = [i for i in range(0,9)]
 
-	bfs(state, castSpell, params)
-
-
-	# a = ['R'] * 9
-	# for i in range(0,9):
-	# 	b = castSpell(a, i)
-	# 	printState(b)
-
+	moves, expanded, memory = bfs(state, castSpell, params)
+	print ('Moves: ', moves)
+	print ('The number of nodes expanded: ', expanded)
+	print ('The number of nodes in fringe: ', memory)
 
 
 if __name__ == '__main__':
 	main()
-
-
-#'edreddree' 9 moves
