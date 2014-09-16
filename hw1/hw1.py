@@ -4,7 +4,6 @@ def bfs(state, func, params):
 	if isGoal(state): return True
 	fringe = [state]
 	explored = []
-	states = ''
 	moves = []
 	while True:
 		s = fringe.pop(0)
@@ -14,24 +13,14 @@ def bfs(state, func, params):
 				if not moveStr in moves:
 					moves.append(moveStr)
 					state = func(s, param)
-					# states += (printState(state)) + '\n\n'
 					explored.append(state['state'])
 					if isGoal(state):
 						print (state)
-						print (moves)
-						# print (fringe)
-						# print (explored)
-						# print (states)
+						print ('The number of nodes expanded: ', len(explored))
+						print ('The number of nodes in fringe: ', len(fringe))
 						return
 					fringe.append(state)
-
-					# print (state)
-
-		# print (fringe)
-		# print (explored)
-		# print (states)
-
-	return True
+	return
 
 
 def isGoal(state):
@@ -60,18 +49,18 @@ def printState(state):
 	return string[0:3] + '\n' + string[3:6] + '\n' + string[6:9]
 
 def main():
-	# state = input('enter an initial state: ')
-	# state = 'dedeeeded'
-	state = 'ededdeddr'
-	# state = {'state': list(state.upper()), 'parent': None, 'move': None}
+	while True:
+		state = input('Enter an initial state: ')
+		if len(state) == 9 and set(state.lower()) in [{'e'},{'d'},{'r'},{'e','d'},{'e','r'},{'d','r'},{'e','d','r'}]:
+			break
+		print ('Invalid input.')
+
 	state = {'state': list(state.upper()), 'move': []}
 
 
 	params = [i for i in range(0,9)]
 
 	bfs(state, castSpell, params)
-
-	# print(castSpell(state, 4))
 
 
 	# a = ['R'] * 9
@@ -83,3 +72,6 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+
+#'edreddree' 9 moves
