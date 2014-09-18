@@ -1,23 +1,39 @@
 #!/usr/bin/python3
 
-def search(state, func, params, searchAlg):
+def search(state, func, params, searchAlg, limit=1000):
 	if isGoal(state): return ([],0,0,0)
+	searchAlg = searchAlg()
 	fringe = [state]
 	explored = 0
-	moves = []
-	while True:
-		node = fringe.pop(searchAlg())
+	moveHistory = []
+	while len(fringe) > 0:
+		node = fringe.pop(searchAlg)
 		if isGoal(node):
-			# print (node)
-			return [x + 1 for x in node['move']], explored, len(fringe), len(moves)
+			return [x + 1 for x in node['move']], explored, len(fringe), len(moveHistory)
 		for param in params:
-			if node['move'].count(param) < 2:
+			if len(node['move']) < limit and node['move'].count(param) < 2:
 				moveStr = ''.join([str(x) for x in sorted(node['move'] + [param])])
-				if not moveStr in moves:
+				if not moveStr in moveHistory:
 					state = func(node, param)
-					moves.append(moveStr)
+					moveHistory.append(moveStr)
 					fringe.append(state)
 					explored += 1
+
+	# Failed to find a solution
+	return False, explored, 0,0
+
+
+def ids(state, func, params):
+	"""Iterative Deepening"""
+	totalExpanded = 0
+	limit = 0
+	while True:
+		print ('calling search with limit ', limit)
+		moves, expanded, memory, moveHistory = search(state, castSpell, params, dfs, limit)
+		totalExpanded += expanded
+		if moves != False:
+			return moves, totalExpanded, memory, moveHistory
+		limit += 1
 
 def bfs():
 	return 0
@@ -53,6 +69,7 @@ def main():
 	params = [i for i in range(0,9)]
 
 	moves, expanded, memory, moveHistory = search(state, castSpell, params, bfs)
+	# moves, expanded, memory, moveHistory = ids(state, castSpell, params)
 	print ('Moves: ', moves)
 	print ('The number of nodes expanded: ', expanded)
 	print ('The number of nodes in fringe: ', memory)
