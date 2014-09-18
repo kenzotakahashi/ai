@@ -1,14 +1,15 @@
 #!/usr/bin/python3
 
-def bfs(state, func, params):
-	if isGoal(state): return ([],0,0)
+def search(state, func, params, searchAlg):
+	if isGoal(state): return ([],0,0,0)
 	fringe = [state]
 	explored = 0
 	moves = []
 	while True:
-		node = fringe.pop(0)
+		node = fringe.pop(searchAlg())
 		if isGoal(node):
-			return node['move'], explored, len(fringe)
+			# print (node)
+			return [x + 1 for x in node['move']], explored, len(fringe), len(moves)
 		for param in params:
 			if node['move'].count(param) < 2:
 				moveStr = ''.join([str(x) for x in sorted(node['move'] + [param])])
@@ -17,6 +18,12 @@ def bfs(state, func, params):
 					moves.append(moveStr)
 					fringe.append(state)
 					explored += 1
+
+def bfs():
+	return 0
+
+def dfs():
+	return -1
 
 def isGoal(state):
 	return len(set(state['state'])) == 1
@@ -45,11 +52,11 @@ def main():
 	state = {'state': list(state.upper()), 'move': []}
 	params = [i for i in range(0,9)]
 
-	moves, expanded, memory = bfs(state, castSpell, params)
+	moves, expanded, memory, moveHistory = search(state, castSpell, params, bfs)
 	print ('Moves: ', moves)
 	print ('The number of nodes expanded: ', expanded)
 	print ('The number of nodes in fringe: ', memory)
-
+	print ('The number of moves in memory: ', moveHistory)
 
 if __name__ == '__main__':
 	main()
