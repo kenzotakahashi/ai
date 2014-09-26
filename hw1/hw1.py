@@ -11,7 +11,7 @@ def search(state, func, params, searchAlg, limit=1000):
 		if isGoal(node):
 			return [x + 1 for x in node['move']], explored, len(fringe), len(moveHistory)
 		for param in params:
-			if len(node['move']) < limit and node['move'].count(param) < 2:
+			if node['move'].count(param) < 2 and len(node['move']) < limit:
 				moveStr = ''.join([str(x) for x in sorted(node['move'] + [param])])
 				if not moveStr in moveHistory:
 					state = func(node, param)
@@ -28,7 +28,7 @@ def ids(state, func, params):
 	totalExpanded = 0
 	limit = 0
 	while True:
-		print ('calling search with limit ', limit)
+		# print ('calling search with limit ', limit)
 		moves, expanded, memory, moveHistory = search(state, castSpell, params, dfs, limit)
 		totalExpanded += expanded
 		if moves != False:
@@ -58,18 +58,33 @@ def createIndex(num):
 	if not num in [6,7,8]: index.append(num + 3)
 	return index
 
-def main():
+
+def initialBoard():
 	while True:
 		state = input('Enter an initial state: ')
 		if len(state) == 9 and set(state.lower()) in [{'e'},{'d'},{'r'},{'e','d'},{'e','r'},{'d','r'},{'e','d','r'}]:
-			break
+			return state
 		print ('Invalid input.')
+
+def chooseAlgorithm():
+	while True:
+		alg = input('Choose algorithm (breadth first -> [Enter], iterative deepening -> i and [Enter]) ')
+		if alg == '' or alg == 'i':
+			return alg
+		print ('Invalid input.')
+
+def main():
+	state = initialBoard()
+	algorithm = chooseAlgorithm()
 
 	state = {'state': list(state.upper()), 'move': []}
 	params = [i for i in range(0,9)]
 
-	moves, expanded, memory, moveHistory = search(state, castSpell, params, bfs)
-	# moves, expanded, memory, moveHistory = ids(state, castSpell, params)
+	if algorithm == '':
+		moves, expanded, memory, moveHistory = search(state, castSpell, params, bfs)
+	else:
+		moves, expanded, memory, moveHistory = ids(state, castSpell, params)
+
 	print ('Moves: ', moves)
 	print ('The number of nodes expanded: ', expanded)
 	print ('The number of nodes in fringe: ', memory)
