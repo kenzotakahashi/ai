@@ -4,6 +4,7 @@
 Initial State:
 
 At(Middle2)
+Onfloor()
 
 Room(Middle1, Room1), Room(Wall1, Room1), Room(Door1, Room1)
 Room(Middle2, Room2), Room(Wall2, Room2), Room(Door2, Room2)
@@ -18,20 +19,20 @@ In(Box1, Middle4), In(Box2, Middle4), In(Box3, Middle4), In(Box4, Middle4)
 Actions:
 
 Go(x,y)
-	Precondition: Room(x,$z), Room(y,z), At(x)
+	Precondition: Room(x,$z), Room(y,z), At(x), Onfloor()
 	Effect: 	  !At(x), At(y)
 
 Push(b,x,y)
-	Precondition: Room(x,$z), Room(y,z), At(x), In(b,x)
+	Precondition: Room(x,$z), Room(y,z), At(x), In(b,x), Onfloor()
 	Effect: 	  !At(x), !In(b,x), At(y), In(b,y)
 
 ClimbUp(b)
-	Precondition: In(b,$x), At(x)
-	Effect:		  On(b)
+	Precondition: In(b,$x), At(x), Onfloor()
+	Effect:		  !Onfloor(), On(b)
 
 ClimbDown(b)
 	Precondition: On(b)
-	Effect:		  !On(b)
+	Effect:		  !On(b), Onfloor()
 
 TurnOn(s)
 	Precondition: Switch(s,$x), At(x), On(b)
@@ -49,39 +50,39 @@ SwitchOn(Switch3)
 3
 
 Go(Middle2, Door2)
-Middle2 and Door2 are both in Room2. Shakey is at Middle2.
+Middle2 and Door2 are both in Room2. Shakey is at Middle2. Shakey is on floor.
 
 change: At(Door2)
 
 Go(Door2,, Door4)
-Door2 and Door4 are both in Corridor. Shakey is at Door2.
+Door2 and Door4 are both in Corridor. Shakey is at Door2. Shakey is on floor.
 
 change: At(Door4)
 
 Go(Door4, Middle4)
-Door4 and Middle4 are both in Room4. Shakey is at Door4.
+Door4 and Middle4 are both in Room4. Shakey is at Door4. Shakey is on floor.
 
 change: At(Middle4)
 
 Push(Box3, Middle4, Door4)
-Middle4 and Door4 are both in Room4. Shakey is at Middle4. In(Box3, Middle4) tells that Box3 is in Middle4.
+Middle4 and Door4 are both in Room4. Shakey is at Middle4. In(Box3, Middle4) tells that Box3 is in Middle4. Shakey is on floor.
 
 change: At(Door4), In(Box3, Door4)
 
 Push(Box3, Door4, Door3)
-Door4 and Door3 are both in Corridor. Shakey and Box3 are both at Door4.
+Door4 and Door3 are both in Corridor. Shakey and Box3 are both at Door4. Shakey is on floor.
 
 change: At(Door3), In(Box3, Door3)
 
 Push(Box3, Door3, Wall3)
-Door3 and Wall3 are both in Room3. Shakey and Box3 are both in Door3.
+Door3 and Wall3 are both in Room3. Shakey and Box3 are both in Door3. Shakey is on floor.
 
 change: At(Wall3), In(Box3, Wall3)
 
 ClimbUp(Box3)
-Box3 and Shakey are both at the same location.
+Box3 and Shakey are both at the same location. Shakey is on floor.
 
-change: On(Box3)
+change: !onflorr(), On(Box3)
 
 TurnOn(Switch3)
 Switch(Switch3, Wall3) tells that Switch3 is on Wall3. Shakey is at Wall3. Shakey in on Box3.
